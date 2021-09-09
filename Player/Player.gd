@@ -10,6 +10,7 @@ enum {
 
 var state = MOVE
 var velocity = Vector2.ZERO
+var roll_vector = Vector2.LEFT
 
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
@@ -23,7 +24,7 @@ func _process(delta):
 		MOVE:
 			move_state()
 		ROLL:
-			pass
+			roll_state()
 		ATTACK:
 			attack_state()
 	 
@@ -34,9 +35,11 @@ func move_state():
 	input_vector = input_vector.normalized()
 	
 	if input_vector != Vector2.ZERO:
+		roll_vector = input_vector
 		animationTree.set("parameters/Idle/blend_position", input_vector)
 		animationTree.set("parameters/Run/blend_position", input_vector)
 		animationTree.set("parameters/Attack/blend_position", input_vector)
+		animationTree.set("parameters/Roll/blend_position", input_vector)
 		animationState.travel("Run")
 		velocity = input_vector * MAX_SPEED
 	else:
@@ -47,9 +50,20 @@ func move_state():
 	
 	if Input.is_action_just_pressed("attack"):
 		state = ATTACK
+	
+	if Input.is_action_just_pressed("roll"):
+		state = ROLL
+		
+func roll_state():
+	velocity = roll_vector * MAX_SPEED * 1.2
+	animationState.travel("Roll")
+	velocity = move_and_slide(velocity)
 
 func attack_state():
 	animationState.travel("Attack")
 	
 func attack_animation_finished():
+	state = MOVE	
+	
+func roll_animation_finished():
 	state = MOVE	
