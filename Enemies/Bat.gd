@@ -41,7 +41,7 @@ func _process(delta):
 			sprite.flip_h = velocity.x <0
 			
 	if(softCollision.is_colliding()):
-		velocity += softCollision.get_push_vector() * delta * 200
+		velocity += softCollision.get_push_vector() * delta * 400
 	velocity = move_and_slide(velocity)
 	
 func seek_player():

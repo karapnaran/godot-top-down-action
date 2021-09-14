@@ -19,6 +19,7 @@ onready var animationTree = $AnimationTree
 onready var animationState = animationTree.get("parameters/playback")
 onready var swordHitbox = $HitboxPivot/SwordHitbox
 onready var hurtbox = $Hurtbox
+onready var collissionShape = $Hurtbox/CollisionShape2D
 
 func _ready():
 	stats.connect("dead", self, "queue_free")
@@ -62,9 +63,11 @@ func move_state():
 		state = ROLL
 		
 func roll_state():
+	collissionShape.set_deferred("disabled", true)
 	velocity = roll_vector * ROLL_SPEED
 	animationState.travel("Roll")
 	velocity = move_and_slide(velocity)
+	collissionShape.set_deferred("disabled", false)
 
 func attack_state():
 	animationState.travel("Attack")
